@@ -24,7 +24,7 @@
                     {% endif %}
                     {{ field }}
                     {% if field.errors %}
-                    {% for error in field.errors %}
+                    {% for error in field.errors %}<br/>
                     <span class="help-inline">{{ error }}</span>
                     {% endfor %}
                     {% endif %}
