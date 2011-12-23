@@ -153,23 +153,36 @@
             return false;
         });
         
+		var enable_form = function (form) {
+			form = $(form);
+			var remove_button = form.find('.form-control-remove');
+			var del = delete_field(form);
+			remove_button.button('toggle');
+			remove_button.button('reset');
+			remove_button.attr('title', 'remove');
+			del.removeAttr('checked');
+            form.find(':input').removeAttr('disabled');
+		};
+		
+		var disable_form = function (form) {
+			form = $(form);
+			var remove_button = form.find('.form-control-remove');
+			var del = delete_field(form);
+            remove_button.button('toggle');
+            remove_button.button('toggled');
+            remove_button.attr('title', 'undo');
+            del.attr('checked', 'checked');
+            form.find(':input').not('[name$=-id]').not(remove_button).not(del).attr('disabled', 'disabled');
+		};
+		
         context.on('click', '.form-control-remove', function () {
             var $this = $(this);
             var form = $this.parents('.formset-form');
-            var del = delete_field(form);
             var button_state = $this.hasClass('active');
             if (button_state) {
-                $this.button('toggle');
-                $this.button('reset');
-                $this.attr('title', 'remove');
-                del.removeAttr('checked');
-                form.find(':input').removeAttr('disabled');
+				enable_form(form);
             } else {
-                $this.button('toggle');
-                $this.button('toggled');
-                $this.attr('title', 'undo');
-                del.attr('checked', 'checked');
-                form.find(':input').not($this).not(del).attr('disabled', 'disabled');
+				disable_form(form);
             }
             update_button_states();
             return false;
@@ -208,6 +221,13 @@
         context.on('click', '.form-control-move-down', reorderer(1));
 		
 		reorderer(0).apply($(allforms[0]).find('td')[0]);
+		forms().each(function () {
+			var form = $(this);
+			var del = delete_field(form);
+			if (del.is(':checked')) {
+				disable_form(form);
+			}
+		});
         update_button_states();
     });
 })( window.jQuery || window.ender );
